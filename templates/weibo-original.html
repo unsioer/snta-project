@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+{% block content %}
+{% include 'weibo-nav.html' %}
+<h1 class="mt-5 mb-5">微博内容</h1>
+<div>
+    {% include 'paging.html' %}
+    <table class="table">
+        <tr>
+            <th>作者</th>
+            <th>内容</th>
+            <th>位置</th>
+            <th>时间</th>
+            <th>来源</th>
+            <th>转发</th>
+            <th>评论</th>
+            <th>赞</th>
+            <th>标签</th>
+        </tr>
+        {% for data in data_list %}
+        <tr>
+            <td><a href="{{ data.main_page }}">{{ data.author }}</a></td>
+            <td>{{ data.content }}</td>
+            <td>{% if data.location %}{{ data.location }}{% endif %}</td>
+            <td><a href="{{ data.url }}">{{ data.time }}</a></td>
+            <td>{% if data.source %}{{ data.source }}{% endif %}</td>
+            <td>{{ data.share }}</td>
+            <td>{{ data.comment }}</td>
+            <td>{{ data.like }}</td>
+            <td>{{ data.label }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% include 'paging.html' %}
+</div>
+{% endblock content %}

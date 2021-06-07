@@ -1,0 +1,33 @@
+<div class="pagination col-4 offset-4 mb-5 mt-5">
+            {% if page_object.has_previous %}
+                <div class="">
+                    <button class="btn" type="submit" id="previous-page" title="上一页" onclick="javascript:window.location.href='?page={{ page_object.previous_page_number }}'">
+					<svg class="bi bi-chevron-left" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+						xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd"
+							d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z">
+						</path>
+					</svg>
+				</button>
+                </div>
+            {% endif %}
+            <select class="form-control" id="page" name="page" onchange="javascript:window.location.href='?page='+this.value;">
+                {% for pg in page_object.paginator.page_range %}
+                <option value="{{ pg }}" {% if page_object.number == pg %}selected{% endif %}>
+                <a href="?page={{ pg }}">{{ pg }}</a>
+                </option>
+                {% endfor %}
+			</select>        
+            {% if page_object.has_next %}
+                <div class="">
+                    <button class="btn" type="submit" id="next-page" title="下一页" onclick="javascript:window.location.href='?page={{ page_object.next_page_number }}'">
+					<svg class="bi bi-chevron-right" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+						xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd"
+							d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z">
+						</path>
+					</svg>
+				</button>
+                </div>
+            {% endif %}
+        </div>

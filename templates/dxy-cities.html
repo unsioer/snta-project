@@ -1,0 +1,304 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    {% include 'dxy-nav.html' %}
+    
+    <div class="row">
+        <div class="col-6 mt-2 mb-2">
+            <div id="city" class="card" style="width: 500px;height:400px;"></div>
+        </div>
+        <div class="col-6 mt-2 mb-2">
+            <div class="mb-3 mt-3">
+                <h2 class="mt-3 mb-3">城市疫情趋势——{{city}}</h2>
+                <div>左图显示湖北省具体城市（含所有地市和仙桃、潜江、天门三个省辖市及神农架林区）的疫情发展趋势。选择下方菜单切换城市。</div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input name="piedate" style="display:none;" value="{{ piedate }}"/>
+                    <select class="form-control mt-3 mb-3" id="city" name="city" onchange="javascript:this.form.submit();">
+                        {% for c in available_cities %}
+                        <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div class="mb-3 mt-3">
+                <h2 class="mt-3 mb-3">累计病例来源——{{ piedatecases.0.year }}/{{ piedatecases.0.month }}/{{ piedatecases.0.day }}</h2>
+                <div>下方图表显示指定日期湖北省新冠累计病例来源占比情况。选择下方菜单切换日期。</div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input name="city" style="display:none;" value="{{ city }}"/>
+                    <select class="form-control mt-3 mb-3" id="piedate" name="piedate" onchange="javascript:this.form.submit();">
+                        {% for d in available_dates %}
+                        <option value="{{ d }}" {% if curpiedate == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-4 mt-2 mb-2">
+            <div id="city-confirm" class="card" style="width: 350px;height:400px;">
+            </div>
+        </div>
+        <div class="col-4 mt-2 mb-2">
+            <div id="city-cured" class="card" style="width: 350px;height:400px;">
+            </div>    
+        </div>
+        <div class="col-4 mt-2 mb-2">
+            <div id="city-dead" class="card" style="width: 350px;height:400px;">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+var citycharts = echarts.init(document.getElementById("city"));
+var option = {
+    title: {
+        text: '{{ city }}疫情趋势'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            //type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
+        }
+    },
+    legend: {
+        data: ['确诊', '治愈', '死亡']
+    },
+    toolbox: {
+        feature: {
+            mark: {show: true},
+            dataView: {show: true, readOnly: false},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: [
+        {
+            type: 'time',
+            boundaryGap: false,
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value'
+        }
+    ],
+    series: [
+        {
+            name: '确诊',
+            type: 'line',
+            areaStyle: {},
+            emphasis: {
+                focus: 'series'
+            },
+            data: {{ city_confirmCount|safe }}
+        },
+        {
+            name: '治愈',
+            type: 'line',
+            areaStyle: {},
+            emphasis: {
+                focus: 'series'
+            },
+            data: {{ city_curedCount|safe }}
+        },
+        {
+            name: '死亡',
+            type: 'line',
+            areaStyle: {},
+            emphasis: {
+                focus: 'series'
+            },
+            data: {{ city_deadCount|safe }}
+        },
+    ]
+};
+
+citycharts.setOption(option);
+</script>
+
+<script>
+var cityConfirm = echarts.init(document.getElementById("city-confirm"));
+var cityCured = echarts.init(document.getElementById("city-cured"));
+var cityDead = echarts.init(document.getElementById("city-dead"));
+var cityConfirmOption = {
+    title: {
+        text: '累计确诊病例来源',
+        subtext: {% if piedatecases %}'{{ piedatecases.0.year }}年{{ piedatecases.0.month }}月{{ piedatecases.0.day }}日'{% endif %},
+        left: 'center',
+    },
+    legend: {
+        top: 'bottom'
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            mark: {show: true},
+            dataView: {show: true, readOnly: false},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    tooltip: {
+                trigger: 'item'
+            },
+    series: [
+        {
+            name: '累计确诊',
+            type: 'pie',
+            radius: '50%',
+            label: {
+                show: true,
+                position: 'center',
+                fontSize:'25',
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '40',
+                    fontWeight: 'bold'
+                },
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+
+            },
+            data: [
+                {% for c in piedatecases %}
+                {value: {{c.confirmCount}}, name: '{{c.cityName}}' },
+                {% endfor %}
+            ]
+        }
+    ]
+};
+
+var cityCuredOption = {
+    title: {
+        text: '累计治愈病例来源',
+        subtext: {% if piedatecases %}'{{ piedatecases.0.year }}年{{ piedatecases.0.month }}月{{ piedatecases.0.day }}日'{% endif %},
+        left: 'center',
+    },
+    legend: {
+        top: 'bottom'
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            mark: {show: true},
+            dataView: {show: true, readOnly: false},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    tooltip: {
+                trigger: 'item'
+            },
+    series: [
+        {
+            name: '累计治愈',
+            type: 'pie',
+            radius: '50%',
+            label: {
+                show: true,
+                position: 'center',
+                fontSize:'25',
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '40',
+                    fontWeight: 'bold'
+                },
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+
+            },
+            data: [
+                {% for c in piedatecases %}
+                {value: {{c.curedCount}}, name: '{{c.cityName}}' },
+                {% endfor %}
+            ]
+        }
+    ]
+};
+
+var cityDeadOption = {
+    title: {
+        text: '累计死亡病例来源',
+        subtext: {% if piedatecases %}'{{ piedatecases.0.year }}年{{ piedatecases.0.month }}月{{ piedatecases.0.day }}日'{% endif %},
+        left: 'center',
+    },
+    legend: {
+        top: 'bottom'
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            mark: {show: true},
+            dataView: {show: true, readOnly: false},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    tooltip: {
+                trigger: 'item'
+            },
+    series: [
+        {
+            name: '累计死亡',
+            type: 'pie',
+            radius: '50%',
+            label: {
+                show: true,
+                position: 'center',
+                fontSize:'25',
+            },
+            emphasis: {
+                label: {
+                    show: true,
+                    fontSize: '40',
+                    fontWeight: 'bold'
+                },
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+
+            },
+            data: [
+                {% for c in piedatecases %}
+                {value: {{c.deadCount}}, name: '{{c.cityName}}' },
+                {% endfor %}
+            ]
+        }
+    ]
+};
+
+cityConfirm.setOption(cityConfirmOption);
+cityCured.setOption(cityCuredOption);
+cityDead.setOption(cityDeadOption);
+
+</script>
+
+{% endblock script %}
+
+

@@ -1,0 +1,71 @@
+<html>
+{% include 'head.html' %}
+
+<body>
+  {% include 'nav.html' %}
+  <div id="wrapper">
+
+    <div class="container">
+      {% block content %}
+      <h1 class='mt-5 mb-5'>一览</h1>
+      <div class="row">
+        <div class='col-4'>
+            <div class='card'>
+            <img src="/static/images/cover/coronavirus.jpg" class="card-img-top mt-2" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">丁香园新冠疫情数据</h5>
+              <div class="alert alert-success" role="alert">
+                <div class="text-center">武汉是一座英雄的城市。</div>
+                <div class="text-right">——钟南山</div>
+              </div>
+              
+              <p class="card-text">我们以<a href="https://github.com/BlankerL/DXY-COVID-19-Data">丁香园数据仓库</a>中湖北省的新冠疫情数据为例进行数据预处理、数据可视化和分类算法测试。
+              </p>
+              <a href="/dxy" class="btn btn-primary">查看</a>
+            </div>
+          </div>
+        </div>
+        <div class='col-4'>
+          <div class='card'>
+            <img src="/static/images/cover/weibo.png" class="card-img-top mt-2" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">美国大选微博舆情数据</h5>
+              <div class="alert alert-warning" role="alert">
+                <div class="text-center">特朗普霸占热搜</div>
+                <div class="text-right">——微博网友</div>
+              </div>
+              <p class="card-text">我们根据<b>特朗普</b>、<b>拜登</b>、<b>共和党</b>、<b>民主党</b>、<b>众议院</b>、<b>参议院</b>、<b>美国国会</b>、<b>彭斯</b>、<b>贺锦丽</b>这十个关键词，爬取从2020年8月1日至2021年1月31日的微博，共获得四五十万条。
+              </p>
+              <a href="/weibo" class="btn btn-primary">查看</a>
+            </div>
+          </div>
+        </div>
+
+        <div class='col-4'>
+          <div class='card'>
+            <img src="/static/images/cover/twitter.png" class="card-img-top mt-2" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">美国大选推特舆情数据</h5>
+              <div class="alert alert-danger" role="alert">
+                <div class="text-center">Keep America Great!</div>
+                <div class="text-right">— Donald J. Trump</div>
+              </div>
+              <p class="card-text">我们根据<b>trump</b>、<b>biden</b>、<b>us election</b>这三个关键词，爬取从2020年8月1日至2021年1月31日的推文，共获得五万余条。
+              </p>
+              <a href="/weibo" class="btn btn-primary">查看</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% endblock content %}
+    </div>
+  </div>
+
+
+  {% include 'footer.html' %}
+  {% block script %}
+  {% endblock script %}
+</body>
+
+</html>

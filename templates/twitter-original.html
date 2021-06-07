@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+{% block content %}
+{% include 'twitter-nav.html' %}
+<h1 class="mt-5 mb-5">推文内容</h1>
+<div>
+    {% include 'paging.html' %}
+    <table class="table">
+        <tr>
+            <th>作者</th>
+            <th>内容</th>
+            <th>时间</th>
+            <th>转发</th>
+            <th>评论</th>
+            <th>赞</th>
+            <th>标签</th>
+        </tr>
+        {% for data in data_list %}
+        <tr>
+            <td>{{ data.user_name }}</td>
+            <td>{{ data.content }}</td>
+            <td>{{ data.created_time }}</td>
+            <td>{{ data.share }}</td>
+            <td>{{ data.comment }}</td>
+            <td>{{ data.like }}</td>
+            <td>{{ data.label }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% include 'paging.html' %}
+</div>
+{% endblock content %}

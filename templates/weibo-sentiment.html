@@ -1,0 +1,423 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    {% include 'weibo-nav.html' %}
+    <div class='row'>
+    	<h1 class='col-4 mt-4 mb-4'>微博数据情感分析</h1>
+        <div class='col-8 mt-4 mb-4'>
+            <p>我们的文本情感分析模型采用NLP处理库<code>transformers</code>官网上预训练好的基于BERT且支持中文的<code>twitter-xlm-roberta-base-sentiment</code>。</p>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-6">
+            <div class="card mt-2">
+                <div class="container mt-4 mb-4">
+                    <h2 class='mb-4 text-center'>按月统计</h2>
+                    <p>按月统计的情感波动趋势较为明显：</p>
+                    <div class="">
+                    <div id="month-positive" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                    <div class="">
+                        <div id="month-negative" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                    <div class="">
+                        <div id="month-neutral" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card mt-2">
+                <div class="container mt-4 mb-4">
+                    <h2 class='mb-4 text-center'>按日统计</h2>
+                    <p>按日统计的情感分析结果波动较大，相对难以分辨。</p>
+                    <div style="text-align: center;">
+                        <div id="day-positive" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div id="day-negative" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div id="day-neutral" class="card mt-2 mb-2" style="width: 450px;height: 320px; "></div>
+                    </div>
+                </div>
+            </div>      
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    var charts = echarts.init(document.getElementById("month-positive"));
+    option = {
+        title: {
+            text: '正面'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in monthsentiment %}'{{i.month|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.positiveTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.positiveBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+<script>
+    var charts = echarts.init(document.getElementById("month-negative"));
+    option = {
+        title: {
+            text: '负面'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in monthsentiment %}'{{i.month|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.negativeTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.negativeBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+<script>
+    var charts = echarts.init(document.getElementById("month-neutral"));
+    option = {
+        title: {
+            text: '中立'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in monthsentiment %}'{{i.month|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.neutralTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in monthsentiment %}{{i.neutralBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+<script>
+    var charts = echarts.init(document.getElementById("day-positive"));
+    option = {
+        title: {
+            text: '正面'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in daysentiment %}'{{i.date|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.positiveTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.positiveBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+<script>
+    var charts = echarts.init(document.getElementById("day-negative"));
+    option = {
+        title: {
+            text: '负面'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in daysentiment %}'{{i.date|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.negativeTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.negativeBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+<script>
+    var charts = echarts.init(document.getElementById("day-neutral"));
+    option = {
+        title: {
+            text: '中立'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['特朗普', '拜登']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data:[{% for i in daysentiment %}'{{i.date|safe}}',{% endfor %}]
+            }
+        ],
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                name: '特朗普',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.neutralTrump}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'red',
+                    }
+                },
+            },
+            {
+                name: '拜登',
+                type: 'line',
+                data: [{% for i in daysentiment %}{{i.neutralBiden}},{% endfor %}],
+                itemStyle: {
+                    normal: {
+                        color: 'blue',
+                    }
+                },
+            },
+        ]
+    };
+    charts.setOption(option);
+</script>
+{% endblock script %}
+
+

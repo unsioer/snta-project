@@ -1,0 +1,179 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<div class="container">
+    {% include 'twitter-nav.html' %}
+    <div class='row'>
+    	<h1 class='col-4 mt-4 mb-4'>美国大选推特数据</h1>
+        <div class='col-8 mt-4 mb-4'>
+            <p class="card-text">我们根据<b>trump</b>、<b>biden</b>、<b>us election</b>这三个关键词，爬取从2020年8月1日至2021年1月31日的推文，共获得五万余条。经过必要的预处理后，我们最终保留34267条推文。</p>
+            <p>从词云不难看出推特上的主流言论呈现一边倒反对特朗普的情形，故我们不对推文作情感分析。</p>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="container mt-4 mb-4">
+                    <h2 class='mb-4 text-center'>分来源词云</h2>
+                    <p>我们对原始的数据进行去重操作，并剔除了一些无关主题或广告类的微博。根据10个关键词分别得到微博词云如下：</p>
+                    <form action="." method="POST">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <div class="col-10">
+                                <input name="cluster" style="display:none;" value="{{ cluster }}"/>
+                                <select class="form-control" id="label" name="label" onchange="javascript:this.form.submit();">
+                                {% for l in labels %}
+                                <option value="{{ l.0 }}" {% if label == l.0 %}selected{% endif %}>{{ l.1 }}</option>
+                                {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <div style="text-align: center;">
+                        <div id="label-word-charts" class="card" style="width: 450px;height: 320px; "></div>
+                    </div>
+                    <div class="mt-2 mb-2"></div>
+                </div>
+            </div>
+            <div class="card mt-2">
+                <div class="container mt-4 mb-4">
+                    <h2 class='mb-4 text-center'>聚类词云</h2>
+                    <p>根据聚类结果，我们检索原始微博，各取10个最高频词，得到5类微博词云如下：</p>
+                    <form action="." method="POST">
+                        {% csrf_token %}
+                        <input name="label" style="display:none;" value="{{ label }}"/>
+                        <div class="form-group row">
+                            <div class="col-10">
+                                <select class="form-control" id="cluster" name="cluster" onchange="javascript:this.form.submit();">
+                                <option value="1" {% if cluster == "1" %}selected{% endif %}>聚类1</option>
+                                <option value="2" {% if cluster == "2" %}selected{% endif %}>聚类2</option>
+                                <option value="3" {% if cluster == "3" %}selected{% endif %}>聚类3</option>
+                                <option value="4" {% if cluster == "4" %}selected{% endif %}>聚类4</option>
+                                <option value="5" {% if cluster == "5" %}selected{% endif %}>聚类5</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                    <div style="text-align: center;">
+                        <div id="cluster-word-charts" class="card" style="width: 450px;height: 320px; "></div>
+                    </div>
+                </div>
+            </div>         
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="container mt-4 mb-4">
+                    <h2 class='mb-4 text-center'>降维</h2>
+                    <p>我们将预处理后的微博数据经过PCA降成3维，采用Kmeans对降维后的数据尝试聚类，得SSE如图：</p>
+                    <div class='card'>
+                        <img width="100%" src="/static/images/weibo/SSE.png"/>
+                    </div>
+                    
+                    <p class="mt-2">我们认为当k大于5以后，SSE下降幅度趋缓。最终我们选择将数据大致分为5类。</p>
+                    <img width="100%" src="/static/images/weibo/聚类可视化.png"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+    var labelcharts = echarts.init(document.getElementById("label-word-charts"));
+    var clustercharts = echarts.init(document.getElementById("cluster-word-charts"));
+	var labellist = [];
+    var clusterlist=[];
+	labellist.push(
+		{% for w in labelword %}
+		{
+			"name": "{{ w.word }}",
+			"value": {{ w.weight }},
+		},
+		{% endfor %}
+    );
+    clusterlist.push(
+		{% for w in clusterword %}
+		{
+			"name": "{{ w.word }}",
+			"value": {{ w.weight }},
+		},
+		{% endfor %}        
+    );
+	image1 = "/static/images/circle.jpg";
+
+	var maskResource = new Image();
+	maskResource.src = image1;
+	var option = {
+		title: {
+			text: '{{ labelcn }}微博词云',
+			left: 'center',
+			right: 'center',
+		},
+		tooltip: {
+		},
+		series: [{
+				maskImage: maskResource,
+				//词的类型
+				type: 'wordCloud',
+				//设置字符大小范围
+				sizeRange: [10, 50],
+				rotationRange: [-45, 45],
+				width: '100%',
+                height: '100%',
+				textStyle: {
+                    color: function () {
+                        return 'rgb('  + [
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160),
+                            Math.round(Math.random() * 160)
+                        ].join(',') + ')';
+					}
+
+				},
+				//不要忘记调用数据
+				data: labellist
+
+			}
+		]
+
+	};
+    
+	maskResource.onload = function () {
+		labelcharts.setOption(option);
+        clustercharts.setOption({
+            title: {
+                text: '聚类{{ cluster }}微博词云',
+                left: 'center',
+                right: 'center',
+            },
+            tooltip: {
+            },
+            series: [{
+                    maskImage: maskResource,
+                    //词的类型
+                    type: 'wordCloud',
+                    //设置字符大小范围
+                    sizeRange: [20, 50],
+                    rotationRange: [-30, 30],
+                    width: '100%',
+                    height: '100%',
+                    textStyle: {
+                        color: function () {
+                            return 'rgb('  + [
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160)
+                            ].join(',') + ')';
+                        }
+                    },
+                    data: clusterlist
+                }],
+	    });
+    }
+</script>
+{% endblock script %}
+
+

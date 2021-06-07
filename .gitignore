@@ -1,0 +1,4 @@
+/data
+migrations
+__pycache__
+/*.sqlite3
