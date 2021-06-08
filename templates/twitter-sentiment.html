@@ -2,13 +2,15 @@
 
 {% block content %}
 <div class="container">
-    {% include 'weibo-nav.html' %}
+    {% include 'twitter-nav.html' %}
     <div class='row'>
-    	<h1 class='col-4 mt-4 mb-4'>微博数据情感分析</h1>
+    	<h1 class='col-4 mt-4 mb-4'>推特数据情感分析</h1>
         <div class='col-8 mt-4 mb-4'>
-            <p>我们的文本情感分析模型采用NLP处理库<code>transformers</code>官网上预训练好的基于BERT且支持中文的<code>twitter-xlm-roberta-base-sentiment</code>。</p>
-            <p>从下方图表不难发现，微博舆论对美国两位总统候选人的负面情感均比较高；拜登相对更能获得中立评论。</p>
-            <p>微博舆论在2020年8月对特朗普的正面情感比例最高，在2020年11月美国大选期间对拜登的正面情感比例最高。</p>
+            <p>我们的文本情感分析模型采用NLP处理库<code>transformers</code>官网上预训练好的基于BERT且支持多语言的<code>twitter-xlm-roberta-base-sentiment</code>。</p>
+            <p>注意到推特中批评特朗普的推文较多，与拜登相关的推文常常会提及特朗普，导致两类推文负面情感比例均比较高。但从仍然能看出推特舆论对拜登的正面情感高于特朗普。</p>
+            <p>2020年9月，两位总统候选人的正面情感均处于最低值。</p>
+            <p>从2020年9月到11月美国大选，推特舆论对拜登的正面情感比例不断升高，到12月有所回落。但到了2021年1月发生特朗普支持者引发的国会骚乱后，对拜登的正面情感比例达到最高。</p>
+            <p>2020年11月美国大选期间，推特舆论对特朗普的正面情感比例明显低于对拜登的正面情感比例，12月后有所回升，但在次年1月由于国会骚乱，对特朗普的正面情感比例又跌落。</p>
         </div>
     </div>
 

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Tweet(models.Model):
     user_id = models.IntegerField()
@@ -11,11 +12,30 @@ class Tweet(models.Model):
     comment = models.IntegerField()
     like = models.IntegerField()
     label = models.CharField(max_length=256)
+
     def __str__(self):
         return self.content
 
 
-'''class MonthSentiment(models.Model):
+class LabelWord(models.Model):
+    word = models.CharField(max_length=256)
+    weight = models.FloatField()
+    label = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.word
+
+
+class ClusterWord(models.Model):
+    word = models.CharField(max_length=256)
+    weight = models.FloatField()
+    cluster = models.IntegerField()
+
+    def __str__(self):
+        return self.word
+
+
+class MonthSentiment(models.Model):
     month = models.CharField(max_length=256)
     neutralBiden = models.FloatField()
     neutralTrump = models.FloatField()
@@ -23,8 +43,10 @@ class Tweet(models.Model):
     positiveTrump = models.FloatField()
     negativeBiden = models.FloatField()
     negativeTrump = models.FloatField()
+
     def __str__(self):
         return self.month
+
 
 class DaySentiment(models.Model):
     date = models.CharField(max_length=256)
@@ -34,5 +56,6 @@ class DaySentiment(models.Model):
     positiveTrump = models.FloatField()
     negativeBiden = models.FloatField()
     negativeTrump = models.FloatField()
+
     def __str__(self):
-        return self.date'''
+        return self.date

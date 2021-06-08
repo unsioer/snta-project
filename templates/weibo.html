@@ -6,14 +6,14 @@
     <div class='row'>
     	<h1 class='col-4 mt-4 mb-4'>美国大选微博数据</h1>
         <div class='col-8 mt-4 mb-4'>
-            <p>我们根据<b>特朗普</b>、<b>拜登</b>、<b>共和党</b>、<b>民主党</b>、<b>众议院</b>、<b>参议院</b>、<b>美国国会</b>、<b>彭斯</b>、<b>贺锦丽</b>这十个关键词，爬取从2020年8月1日至2021年1月31日的微博，共获得四五十万条。经过必要的预处理后，我们最终选定的微博数量为435000条左右。我们运用了特征工程和聚类算法分析微博数据，并完成微博数据的情感分析。</p>
+            <p>我们根据<b>特朗普</b>、<b>拜登</b>、<b>共和党</b>、<b>民主党</b>、<b>众议院</b>、<b>参议院</b>、<b>美国国会</b>、<b>美国大选</b>、<b>彭斯</b>、<b>贺锦丽</b>这十个关键词，爬取从2020年8月1日至2021年1月31日的微博，共获得六十余万条。经过必要的预处理后，我们最终选定的微博数量为435000条左右。我们运用了特征工程和聚类算法分析微博数据，并完成微博数据的情感分析。</p>
         </div>
     </div>
 
 
     <div class="row">
         <div class="col-6">
-            <div class="card">
+            <div class="card mt-2">
                 <div class="container mt-4 mb-4">
                     <h2 class='mb-4 text-center'>分来源词云</h2>
                     <p>我们对原始的数据进行去重操作，并剔除了一些无关主题或广告类的微博。根据10个关键词分别得到微博词云如下：</p>
@@ -33,9 +33,10 @@
                     <div style="text-align: center;">
                         <div id="label-word-charts" class="card" style="width: 450px;height: 320px; "></div>
                     </div>
-                    <div class="mt-2 mb-2">从上述数据我们可以看出，<b>特朗普</b>和<b>美国</b>霸占了多数类别的最高词频。故而，如果需要具体分析每个关键词标签之间的差异，可能需要排除这些高频词。</div>
                 </div>
             </div>
+        </div>
+        <div class="col-6">
             <div class="card mt-2">
                 <div class="container mt-4 mb-4">
                     <h2 class='mb-4 text-center'>聚类词云</h2>
@@ -61,17 +62,20 @@
                 </div>
             </div>         
         </div>
-        <div class="col-6">
+        <div class="col-10 offset-1 mt-2">
             <div class="card">
-                <div class="container mt-4 mb-4">
-                    <h2 class='mb-4 text-center'>降维</h2>
-                    <p>我们将预处理后的微博数据经过PCA降成3维，采用Kmeans对降维后的数据尝试聚类，得SSE如图：</p>
-                    <div class='card'>
-                        <img width="100%" src="/static/images/weibo/SSE.png"/>
+                <div class="row container mt-4 mb-4">
+                    <div class="col-6">
+                        <h2 class='mb-4 text-center'>降维</h2>
+                        <p>我们将预处理后的微博数据经过PCA降成3维，采用Kmeans对降维后的数据尝试聚类，得SSE如图：</p>
+                        <div class='card'>
+                            <img width="100%" src="/static/images/weibo/SSE.png"/>
+                        </div>
                     </div>
-                    
-                    <p class="mt-2">我们认为当k大于5以后，SSE下降幅度趋缓。最终我们选择将数据大致分为5类。</p>
-                    <img width="100%" src="/static/images/weibo/聚类可视化.png"/>
+                    <div class="col-6">
+                        <p class="mt-2">我们认为当k大于5以后，SSE下降幅度趋缓。最终我们选择将数据大致分为5类。</p>
+                        <img width="100%" src="/static/images/weibo/聚类可视化.png"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,6 +117,14 @@
 		},
 		tooltip: {
 		},
+        toolbox: {
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+            }
+        },
 		series: [{
 				maskImage: maskResource,
 				//词的类型
@@ -149,6 +161,14 @@
                 right: 'center',
             },
             tooltip: {
+            },
+            toolbox: {
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
             },
             series: [{
                     maskImage: maskResource,

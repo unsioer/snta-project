@@ -56,8 +56,6 @@ def showDXYCities(request):
     piedatecases = HubeiCityCases.objects.filter(year=year,
                                                  month=month,
                                                  day=day)
-    print(piedatecases)
-
 
     available_dates = HubeiCityCases.objects.values('year', 'month',
                                                     'day').distinct()

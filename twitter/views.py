@@ -3,14 +3,33 @@ from .models import *
 from django.core.paginator import Paginator, Page, EmptyPage, PageNotAnInteger
 
 # Create your views here.
-def showTwitter(request):
+labels=['biden','trump','us election']
 
+def showTwitter(request):
+    label = request.POST.get('label')
+    cluster = request.POST.get('cluster')
+    if label==None or label not in labels:
+        label='trump'
+    try:
+        cluster=int(cluster)
+    except:
+        cluster=1
+    if cluster<1 or cluster>5: cluster=1
+
+    labelword=LabelWord.objects.filter(label=label)
+    clusterword=ClusterWord.objects.filter(cluster=cluster)
 
     return render(request, 'twitter.html', {
         'twitterroot': True,
+        'labels': labels,
+        'label':label,
+        'labelword': labelword,
+        'cluster':str(cluster),
+        'clusterword':clusterword,
     })
 
-'''def showTwitterSentiment(request):
+
+def showTwitterSentiment(request):
     daySentiment=DaySentiment.objects.all()
     monthSentiment=MonthSentiment.objects.all()
     return render(request, "twitter-sentiment.html", {
@@ -18,7 +37,7 @@ def showTwitter(request):
         'daysentiment':daySentiment,
         'monthsentiment':monthSentiment,
     })
-'''
+
 
 def showTwitterOriginal(request):
     tweet = Tweet.objects.all()

@@ -9,9 +9,12 @@
             <div id="city" class="card" style="width: 500px;height:400px;"></div>
         </div>
         <div class="col-6 mt-2 mb-2">
-            <div class="mb-3 mt-3">
-                <h2 class="mt-3 mb-3">城市疫情趋势——{{city}}</h2>
-                <div>左图显示湖北省具体城市（含所有地市和仙桃、潜江、天门三个省辖市及神农架林区）的疫情发展趋势。选择下方菜单切换城市。</div>
+            <div class="mb-3">
+                <h2 class="mb-3">城市疫情趋势——{{city}}</h2>
+                <div>左图显示湖北省具体城市（含所有地市和天门、潜江、仙桃三个省辖市及神农架林区）的疫情发展趋势。选择下方菜单切换城市。<br>
+                    <b>神农架林区</b>仅相当于县级，且距离武汉较远，受疫情影响较小。<br>
+                    较小的地级市<b>鄂州</b>和三个省辖市<b>天门</b>、<b>潜江</b>、<b>仙桃</b>距离武汉较近，故疫情较为严重。<br>
+                </div>
                 <form action="" method="POST">
                     {% csrf_token %}
                     <input name="piedate" style="display:none;" value="{{ piedate }}"/>
